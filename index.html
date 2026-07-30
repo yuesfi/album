@@ -59,7 +59,6 @@
             font-size: 4rem; margin-bottom: 20px; color: var(--text-white);
         }
 
-        /* Latar Belakang Utama Kertas Lecek */
         #background-texture {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-image: url('asset/bg black.png');
@@ -228,15 +227,14 @@
 
         .static-rose {
             position: absolute;
-            bottom: 5%; /* Menempatkan di bagian bawah kertas */
-            right: 15%; /* Menempatkan di sebelah kanan teks */
-            width: 150px; /* Ukuran gambar mawar, sesuaikan jika perlu */
+            bottom: 5%; 
+            right: 15%; 
+            width: 150px; 
             height: auto;
-            z-index: 10; /* Berada di atas gambar kertas, tapi di bawah teks (opsional) */
-            pointer-events: none; /* Tidak mengganggu klik pengguna */
-            filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4)); /* Sedikit bayangan agar tidak flat */
+            z-index: 10; 
+            pointer-events: none; 
+            filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4)); 
             
-            /* Animasi melayang ringan (floating) untuk efek hidup */
             animation: gentleFloat 4s ease-in-out infinite;
         }
 
@@ -361,7 +359,7 @@
                 <img src="asset/paper.png" class="paper-img" alt="Kertas Ucapan">
                 <div class="birthday-text">
                     <h1>Selamat Ulang Tahun Sonia</h1>
-                    <p>"Semoga setiap langkahmu ke depan selalu diiringi kebahagiaan, dan setiap cita-citamu perlahan terwujud serta dirimu dapat menemukan makna yang indah dalam kehidupan. Setiap foto di album ini adalah potongan kecil dari cerita hebatmu."</p>
+                    <p>"Semoga setiap langkahmu ke depan selalu diiringi kebahagiaan, dan setiap cita-citamu perlahan terwujud serta dirimu dapat menemukan makna yang indah dalam kehidupan. Setiap foto di album ini adalah potongan kecil dari cerita hebatmu. Selamat menyaksikan."</p>
                     <span class="tap-hint">Ketuk untuk membuka album</span>
                 </div>
                 <img src="asset/mawar.png" class="static-rose" alt="Mawar">
@@ -456,27 +454,33 @@
 
 
         const storyData = [
-            { img: 'asset/photo/photo1.jpg', title: 'Awal Melodi', desc: 'Seperti nada pertama yang dipetik tanpa membaca partitur. Bermula dari insting, meraba harmoni secara otodidak.' },
-            { img: 'asset/photo/photo2.jpg', title: 'Goresan Makna', desc: 'Di antara rutinitas, menyusun garis dan bentuk. Sebuah karya sederhana yang menyimpan pesan untuk orang terkasih.' },
-            { img: 'asset/photo/photo3.jpg', title: 'Menyusun Ritme', desc: 'Duduk di depan layar, merangkai setiap ketukan, mengubah ide yang acak menjadi sebuah komposisi yang utuh.' },
-            { img: 'asset/photo/photo4.jpg', title: 'Jejak Perjalanan', desc: 'Ditemani deru mesin dan aspal panjang. Menikmati angin dan merawat apa yang selalu menemani perjalanan.' },
-            { img: 'asset/photo/photo5.jpg', title: 'Bergerak Tenang', desc: 'Mampu beradaptasi dengan cepat layaknya air. Menemukan ritme napas dan menguasai kedalaman dalam waktu singkat.' },
-            { img: 'asset/photo/photo6.jpg', title: 'Warna yang Diwariskan', desc: 'Ada kepekaan estetika yang mengalir diam-diam. Bakat visual dan kreativitas yang turun dari sentuhan tangan Ibu.' },
-            { img: 'asset/photo/photo7.jpg', title: 'Harmoni Terdekat', desc: 'Tumbuh bersama suara merdu dan desain digital yang menginspirasi. Ikatan yang saling memotivasi untuk berkarya.' },
-            { img: 'asset/photo/photo8.jpg', title: 'Memecahkan Masalah', desc: 'Tangan yang tak takut kotor oleh debu. Keinginan kuat memahami infrastruktur dan membongkar yang macet.' },
-            { img: 'asset/photo/photo9.jpg', title: 'Sketsa & Pertemuan', desc: 'Koneksi yang terajut lewat karya. Bertukar doa, menyisakan memori tentang satu pertemuan hangat di penghujung cerita.' },
-            { img: 'asset/photo/photo10.jpg', title: 'Lembaran Berikutnya', desc: 'Ini bukan akhir. Setiap hari adalah halaman kosong yang siap diisi dengan melodi baru dan rute yang belum dilewati.' },
+            { img: 'asset/photo/photo1.jpg', title: 'Hangat dalam Riuh', desc: 'Masa kuliah tak akan pernah seindah ini tanpa hadirnya wajah-wajah di foto ini. Duduk melingkar, berbagi makanan, dan tertawa lepas tanpa beban. Sebuah kekacauan manis yang akan selalu dirindukan.' },
+            { img: 'asset/photo/photo2.jpg', title: 'Teman Seperjuangan', desc: 'Menjalani jam-jam perkuliahan yang padat terasa jauh lebih ringan saat dikelilingi oleh mereka. Saling merangkul, berbagi cerita, dan tertawa bersama di sela-sela jadwal adalah momen sederhana yang selalu dirindukan.' },
+            { img: 'asset/photo/photo3.jpg', title: 'Sisi Lain di Lapangan', desc: 'Meninggalkan sejenak rutinitas di depan layar dan urusan troubleshooting demi adu ketangkasan. Gaya kerenmu bersama teman-teman di IT Sport Competition ini benar-benar memancarkan energi yang luar biasa.' },
+            { img: 'asset/photo/photo4.jpg', title: 'Lingkar Kebersamaan', desc: 'Saling merangkul dan berbagi keceriaan di sela-sela aktivitas. Wajah-wajah penuh senyum di foto ini menjadi potret terindah dari persahabatan yang tulus dan menyenangkan.' },
+            { img: 'asset/photo/photo5.jpg', title: 'Tanpa Sengaja', desc: 'Niatnya kalian hanya ingin mengabadikan momen kebersamaan saat kuliah, tapi tanpa sadar aku malah ikut tertangkap kamera dari kejauhan. Sebuah kebetulan konyol yang membuat foto ini jadi punya cerita ekstra.' },
+            { img: 'asset/photo/photo6.jpg', title: 'Keluarga Fakultas', desc: 'Teman seperjuangan yang senasib sepenanggungan melewati masa kuliah. Wajah-wajah lelah namun bahagia di foto ini adalah saksi betapa solidnya kebersamaan kalian saat beristirahat sejenak dari rutinitas kampus.' },
+            { img: 'asset/photo/photo7.jpg', title: 'Waktu Berkualitas', desc: 'Wajah-wajah ceria di foto ini adalah bukti nyata bahwa kebahagiaan paling sederhana sering kali datang dari hal sesederhana meluangkan waktu bersama orang-orang yang tepat.' },
+            { img: 'asset/photo/photo8.jpg', title: 'Angin di Atap Gedung', desc: 'Angin sepoi-sepoi, obrolan acak, dan teman-teman yang selalu asyik diajak seru-seruan bareng. Sebuah potret memori yang menangkap dengan sempurna definisi dari masa muda yang menyenangkan.' },
+            { img: 'asset/photo/photo9.jpg', title: 'Mengabdi dan Menginspirasi', desc: 'Momen PLP di Gresik yang menjadi saksi dedikasimu. Senyum cerahmu di tengah murid-murid ini membuktikan bahwa kamu bukan sekadar hadir untuk mengajar, tapi juga mampu menjadi sosok teladan yang hangat bagi mereka.' },
+            { img: 'asset/photo/photo10.jpg', title: 'Gemuruh Perayaan', desc: 'Bendera berkibar dan sorak-sorai mengiringi langkah para wisudawan. Berada di tengah lautan arak-arakan jurusan ini jadi bukti betapa solid dan serunya keluarga besar kita di kampus.' },
 
-            { img: 'asset/photo/photo1.jpg', title: 'Awal Melodi', desc: 'Seperti nada pertama yang dipetik tanpa membaca partitur. Bermula dari insting, meraba harmoni secara otodidak.' },
-            { img: 'asset/photo/photo2.jpg', title: 'Goresan Makna', desc: 'Di antara rutinitas, menyusun garis dan bentuk. Sebuah karya sederhana yang menyimpan pesan untuk orang terkasih.' },
-            { img: 'asset/photo/photo3.jpg', title: 'Menyusun Ritme', desc: 'Duduk di depan layar, merangkai setiap ketukan, mengubah ide yang acak menjadi sebuah komposisi yang utuh.' },
-            { img: 'asset/photo/photo4.jpg', title: 'Jejak Perjalanan', desc: 'Ditemani deru mesin dan aspal panjang. Menikmati angin dan merawat apa yang selalu menemani perjalanan.' },
-            { img: 'asset/photo/photo5.jpg', title: 'Bergerak Tenang', desc: 'Mampu beradaptasi dengan cepat layaknya air. Menemukan ritme napas dan menguasai kedalaman dalam waktu singkat.' },
-            { img: 'asset/photo/photo6.jpg', title: 'Warna yang Diwariskan', desc: 'Ada kepekaan estetika yang mengalir diam-diam. Bakat visual dan kreativitas yang turun dari sentuhan tangan Ibu.' },
-            { img: 'asset/photo/photo7.jpg', title: 'Harmoni Terdekat', desc: 'Tumbuh bersama suara merdu dan desain digital yang menginspirasi. Ikatan yang saling memotivasi untuk berkarya.' },
-            { img: 'asset/photo/photo8.jpg', title: 'Memecahkan Masalah', desc: 'Tangan yang tak takut kotor oleh debu. Keinginan kuat memahami infrastruktur dan membongkar yang macet.' },
-            { img: 'asset/photo/photo9.jpg', title: 'Sketsa & Pertemuan', desc: 'Koneksi yang terajut lewat karya. Bertukar doa, menyisakan memori tentang satu pertemuan hangat di penghujung cerita.' },
-            { img: 'asset/photo/photo10.jpg', title: 'Lembaran Berikutnya', desc: 'Ini bukan akhir. Setiap hari adalah halaman kosong yang siap diisi dengan melodi baru dan rute yang belum dilewati.' }
+            { img: 'asset/photo/photo11.jpg', title: 'Wish You All the Best', desc: 'Momen absurd saat kita tak sengaja menemukan properti mirip kue ulang tahun. Meskipun kuenya tidak bisa dimakan dan tanpa lilin yang menyala, tawa dan kenangan hari itu tetap terasa manis. Selamat ulang tahun ya!' },
+            { img: 'asset/photo/photo12.jpg', title: 'Lembaran Baru', desc: 'Setelah semua tumpukan kertas skripsi yang dicetak dan malam-malam yang panjang, hari kelulusan itu akhirnya tiba. Kehadiranmu di momen bersejarah ini membuat perayaan pencapaian ini terasa semakin sempurna.' },
+            { img: 'asset/photo/photo13.jpg', title: 'Bintang di Lautan Toga', desc: 'Di antara riuhnya perayaan dan lautan manusia hari itu, kamu bersinar dengan caramu sendiri. Melihatmu mengenakan toga ini membuatku ikut bangga luar biasa. Semua kerja keras dan malam-malam panjangmu akhirnya terbayar lunas.' },
+            { img: 'asset/photo/photo14.jpg', title: 'Jeda di Tengah Kota', desc: 'Menyempatkan diri untuk mampir, makan, dan mengistirahatkan kaki sejenak di sela-sela waktu. Menikmati suasana Kediri bersamamu selalu membuat momen-momen biasa terasa jauh lebih istimewa.' },
+            { img: 'asset/photo/photo15.jpg', title: 'Dalam Satu Bingkai', desc: 'Lagi-lagi berdesakan di ruang sempit demi mengabadikan momen. Entah ini jepretan yang keberapa, tapi setiap hasilnya selalu berhasil menangkap senyum dan kebahagiaan kita dengan sempurna.' },
+            { img: 'asset/photo/photo16.jpg', title: 'Satu Langkah Lebih Dekat', desc: 'Beban berat itu akhirnya terangkat. Momen bahagia setelah seminar hasil terlewati dengan baik. Wajah-wajah ceria di foto ini adalah saksi betapa kerasnya usahamu untuk sampai di titik ini.' },
+            { img: 'asset/photo/photo17.jpg', title: 'Estetika di Sudut Galeri', desc: 'Gaya kasual yang berpadu sempurna dengan latar karya seni bernuansa gelap di belakangmu. Sebuah potret estetik yang menangkap ketenangan dan pesonamu saat menikmati pameran hari itu.' },
+            { img: 'asset/photo/photo18.jpg', title: 'Di Balik Tirai Merah', desc: 'Berdesakan di dalam kotak sempit demi beberapa jepretan konyol. Topi koboi, pose random, dan tawa yang pecah hari itu benar-benar membuat suasana jadi jauh lebih berwarna.' },
+            { img: 'asset/photo/photo19.jpg', title: 'Pantulan Mawar Merah', desc: 'Pakaian gelap yang elegan berpadu dengan kontrasnya warna merah dari sekuntum mawar. Kamu selalu punya cara tersendiri untuk tampil mempesona dan memikat hati meski hanya sekadar berfoto di depan kaca.' },
+            { img: 'asset/photo/photo20.jpg', title: 'Lelah yang Terbayar', desc: 'Kaki pegal dan napas yang terengah-engah, tapi semuanya sepadan. Air Terjun Dolo jadi saksi kalau secapek apa pun perjalanannya, menghabiskan waktu di sini bersamamu selalu jadi hal yang seru.' },
+            
+            { img: 'asset/photo/photo21.jpg', title: 'Jejak di Tengah Malam', desc: 'Berhenti sejenak menyapa pantulan diri di bawah temaram lampu jalan. Terkadang, melaju menyusuri sepinya malam adalah cara terbaik untuk merenung dan menyiapkan diri menyambut hari-hari hebat di depan sana.' },
+            { img: 'asset/photo/photo22.jpg', title: 'Bunga dan Senyuman', desc: 'Di antara riuhnya ucapan selamat dan indahnya karangan bunga, senyum banggamu tetap menjadi pusat utamanya. Sebuah penutupan manis untuk perjuangan panjang di masa kuliah.' },
+            { img: 'asset/photo/photo23.jpg', title: 'Kenangan di Depan Cermin', desc: 'Berdesakan di depan kaca demi satu jepretan sempurna dengan setelan wisuda lengkap. Di balik gelar yang akhirnya diraih, keseruan dan kekonyolan bersama kalian inilah yang akan paling dirindukan.' },
+            { img: 'asset/photo/photo24.jpg', title: 'Panggung Kemenangan', desc: 'Berdiri berdampingan dengan balutan toga kebanggaan di acara puncak Wisuda UNESA. Perjalanan panjang, revisi tanpa henti, dan cerita bersama di kampus akhirnya mencapai garis finisnya hari ini dengan sangat indah.' },
+            { img: 'asset/photo/photo25.jpg', title: 'Momen Kita', desc: 'Tidak ada yang lebih manis daripada mencapai garis finis bersama-sama. Momen ini merekam formasi lengkap para sarjana baru yang siap melangkah ke babak selanjutnya, dengan bekal ilmu dan kenangan indah dari UNESA.' }
         ];
 
         const scatterContainer = document.getElementById('scatter-container');
