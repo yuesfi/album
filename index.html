@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonia's Birthday Album</title>
+    <link rel="icon" type="image/x-icon" href="asset/favicon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+        /* CSS Reset & Variabel Tema */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-black: #0b090a;
+            --accent-red: #a4161a;
+            --dark-red: #660708;
+            --text-white: #f5f3f4;
+            --text-gray: #d3d3d3;
+        }
+        body { 
+            background: var(--bg-black); 
+            font-family: 'Playfair Display', serif; 
+            overflow: hidden; 
+            color: var(--text-white);
+        }
+
+        /* -----------------------------------
+           BLOCKED SCREEN (STRICT)
+           ----------------------------------- */
+        #mobile-block {
+            display: none; /* Akan diatur oleh JS */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-black);
+            z-index: 99999; /* Paling atas */
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 30px;
+        }
+        
+        .block-content {
+            border: 2px dashed var(--dark-red);
+            padding: 40px; border-radius: 10px;
+            background: rgba(10, 10, 10, 0.8);
+        }
+        
+        .block-content h1 {
+            font-family: 'Courier Prime', monospace;
+            color: var(--accent-red);
+            margin-bottom: 20px; font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .block-content p {
+            font-size: 1.2rem; line-height: 1.6;
+            color: var(--text-gray);
+        }
+        
+        .block-icon {
+            font-size: 4rem; margin-bottom: 20px; color: var(--text-white);
+        }
+
+        /* Latar Belakang Utama Kertas Lecek */
+        #background-texture {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('asset/bg black.png');
+            background-size: cover; 
+            background-position: center;
+            z-index: 1;
+        }
+
+        /* -----------------------------------
+           BABAK 0: Layar Kunci (Password)
+           ----------------------------------- */
+        #lock-scene {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(11, 9, 10, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 200; 
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        #lock-scene.unlocked { opacity: 0; pointer-events: none; visibility: hidden; }
+
+        .lock-box {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 50px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            text-align: center; max-width: 90vw;
+        }
+        .lock-box h2 {
+            font-size: 2rem; font-style: italic; color: #780000;
+            margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+        .lock-box p {
+            font-family: 'Courier Prime', monospace; font-size: 1rem; color: var(--text-gray);
+            margin-bottom: 30px; letter-spacing: 1px;
+        }
+
+        .password-container { position: relative; display: inline-block; width: 100%; }
+        #password-input {
+            width: 100%; padding: 15px 20px; background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--dark-red); border-radius: 8px; color: var(--text-white);
+            font-family: 'Courier Prime', monospace; font-size: 1.2rem;
+            text-align: center; letter-spacing: 5px; outline: none; transition: border-color 0.3s;
+        }
+        #password-input:focus { border-color: var(--accent-red); }
+        
+        .unlock-btn {
+            margin-top: 20px; width: 100%; padding: 12px; background: var(--dark-red); border: 1px solid var(--accent-red);
+            color: var(--text-white); font-family: 'Courier Prime', monospace;
+            font-size: 1.1rem; letter-spacing: 2px; border-radius: 8px; cursor: pointer; transition: background 0.3s, transform 0.2s;
+        }
+        .unlock-btn:hover { background: var(--accent-red); transform: scale(1.02); }
+
+        #error-msg {
+            color: #ff4d4d; font-family: 'Courier Prime', monospace; font-size: 0.9rem;
+            margin-top: 15px; display: none; margin-bottom: 0;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); } 25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } 100% { transform: translateX(0); }
+        }
+        .shake-anim { animation: shake 0.4s ease-in-out; }
+
+        /* -----------------------------------
+           BABAK 1: Amplop Terbelah & Mawar
+           ----------------------------------- */
+        #intro-scene { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100; pointer-events: auto; }
+        #intro-scene.opened { pointer-events: none; }
+        #roses-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 110; pointer-events: none; overflow: hidden; transition: opacity 1s ease; }
+        #intro-scene.opened #roses-container { opacity: 0; }
+        
+        .rose {
+            position: absolute; bottom: -20vh; background-image: url('mawar.png'); 
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0; animation: floatRose linear infinite;
+        }
+
+        .rose::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="%23a4161a" xmlns="http://www.w3.org/2000/svg"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z"/></svg>');
+            background-size: contain; background-repeat: no-repeat; z-index: -1;
+        }
+        @keyframes floatRose {
+            0% { transform: translateY(0) rotate(-20deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.9; }
+            80% { opacity: 0.9; }
+            100% { transform: translateY(-120vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        .door {
+            position: absolute; top: 0; height: 100vh; width: 50vw;
+            background-image: url('asset/cover black.png'); background-size: 100vw 100vh; background-repeat: no-repeat;
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1); z-index: 105; box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+        .door-left { left: 0; background-position: left center; border-right: 2px solid var(--dark-red); }
+        .door-right { right: 0; background-position: right center; border-left: 2px solid var(--dark-red); }
+        #intro-scene.opened .door-left { transform: translateX(-100%); }
+        #intro-scene.opened .door-right { transform: translateX(100%); }
+
+        .envelope-text {
+            position: absolute;
+            top: 52%; 
+            left: 55%; 
+            transform: translate(-50%, -50%) rotate(-5deg); 
+            font-family: 'Great Vibes', cursive; 
+            font-size: 5rem;
+            color: #cc0000; 
+            text-align: center;
+            line-height: 1.1;
+            opacity: 0; 
+            pointer-events: none; 
+            text-shadow: 2px 3px 5px rgba(0,0,0,0.5); 
+            z-index: 10;
+        }
+
+        .envelope-text.reveal {
+            animation: fadeWrite 2s ease-out forwards;
+        }
+
+        @keyframes fadeWrite {
+            0% { opacity: 0; transform: translate(-50%, -50%) rotate(-5deg) scale(0.9); }
+            100% { opacity: 1; transform: translate(-50%, -50%) rotate(-5deg) scale(1); }
+        }
+
+        .open-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.8); border: 1px solid var(--accent-red);
+            padding: 15px 30px; border-radius: 5px; color: var(--text-white); font-family: 'Courier Prime', monospace;
+            font-size: 1.2rem; letter-spacing: 3px; cursor: pointer; z-index: 108; backdrop-filter: blur(5px);
+            transition: opacity 0.5s ease, transform 0.3s ease, background 0.3s; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .open-btn:hover { background: var(--dark-red); transform: translate(-50%, -50%) scale(1.05); }
+        #intro-scene.opened .open-btn { opacity: 0; pointer-events: none; }
+        .center-glow {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 100vh;
+            background: rgba(164, 22, 26, 0.5); box-shadow: 0 0 20px var(--accent-red); z-index: 106; pointer-events: none; transition: opacity 0.5s ease;
+        }
+        #intro-scene.opened .center-glow { opacity: 0; }
+
+     
+        /* -----------------------------------
+           BABAK 1.5: Pesan Ulang Tahun
+           ----------------------------------- */
+        #birthday-scene {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 90; opacity: 0; pointer-events: none;
+            display: flex; justify-content: center; align-items: center; transition: opacity 1.5s ease;
+        }
+        #birthday-scene.visible { opacity: 1; pointer-events: auto; }
+
+        .birthday-paper-wrapper {
+            position: relative; width: 95vw; max-width: 1300px; cursor: pointer;
+            filter: drop-shadow(15px 25px 35px rgba(0,0,0,0.8)); opacity: 0; transform: translateY(30px);
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        #birthday-scene.visible .birthday-paper-wrapper { opacity: 1; transform: translateY(0); }
+        .birthday-paper-wrapper:hover { transform: translateY(-5px); }
+        .paper-img { width: 100%; height: auto; display: block; }
+
+        .birthday-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: #1a1a1a; padding: 5% 15%; text-align: center;
+        }
+        .birthday-text h1 { font-size: 2rem; font-style: italic; color: #780000; margin-bottom: 25px; text-shadow: 1px 1px 2px rgba(0,0,0,0.15); }
+        .birthday-text p { font-family: 'Courier Prime', monospace; font-size: 1.2rem; line-height: 1.8; color: #222; margin-bottom: 30px; font-weight: bold; max-width: 599px; }
+        .tap-hint { font-family: 'Courier Prime', monospace; font-size: 1rem; color: #a4161a; animation: pulse 2s infinite; letter-spacing: 2px; margin-top: 15px; }
+
+        .static-rose {
+            position: absolute;
+            bottom: 5%; /* Menempatkan di bagian bawah kertas */
+            right: 15%; /* Menempatkan di sebelah kanan teks */
+            width: 150px; /* Ukuran gambar mawar, sesuaikan jika perlu */
+            height: auto;
+            z-index: 10; /* Berada di atas gambar kertas, tapi di bawah teks (opsional) */
+            pointer-events: none; /* Tidak mengganggu klik pengguna */
+            filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.4)); /* Sedikit bayangan agar tidak flat */
+            
+            /* Animasi melayang ringan (floating) untuk efek hidup */
+            animation: gentleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes gentleFloat {
+            0% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(8deg); }
+            100% { transform: translateY(0) rotate(5deg); }
+        }
+
+
+        /* -----------------------------------
+           BABAK 2: Foto Berantakan
+           ----------------------------------- */
+        #scattered-scene {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 20; opacity: 0; pointer-events: none;
+            transition: opacity 1.5s ease; display: flex; justify-content: center; align-items: center;
+        }
+        #scattered-scene.visible { opacity: 1; pointer-events: auto; }
+        
+        .scatter-text {
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%); font-size: 1.2rem; font-style: italic; color: rgba(255,255,255,0.7);
+            letter-spacing: 2px; text-shadow: 1px 1px 5px #000; pointer-events: none;
+        }
+         
+        .mini-photo {
+            position: absolute; width: 220px; height: 220px; padding: 8px 8px 25px 8px; background: #e0e0e0; box-shadow: 2px 5px 15px rgba(0,0,0,0.7);
+            cursor: pointer; 
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s;
+     
+            outline: 1px solid transparent; 
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        
+        .mini-photo img { 
+            width: 100%; height: 100%; object-fit: cover; pointer-events: none; 
+    
+            filter: grayscale(80%) contrast(1.1);
+            transition: filter 0.4s;
+        }
+        
+        .mini-photo:hover { 
+            transform: scale(1.15) rotate(0deg) !important; 
+            z-index: 50 !important; 
+            box-shadow: 10px 20px 40px rgba(0,0,0,0.9); 
+        }
+        
+        .mini-photo:hover img { 
+            filter: grayscale(0%) contrast(1.1); 
+        }
+        /* -----------------------------------
+           BABAK 3: Galeri Detail & Glassmorphism
+           ----------------------------------- */
+        #gallery-scene {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; opacity: 0; z-index: 30; pointer-events: none;
+            transition: opacity 0.8s ease; background: transparent; cursor: pointer;
+        }
+        #gallery-scene.visible { opacity: 1; pointer-events: auto; } 
+
+        .slide { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; padding: 20px; transition: opacity 0.8s ease; z-index: 32; }
+        .slide.active { opacity: 1; pointer-events: auto; }
+        .content-container { display: flex; flex-direction: column; align-items: center; z-index: 35; cursor: default; }
+        .photo-wrapper { width: 90vw; max-width: 600px; height: 50vh; min-height: 350px; padding: 15px 15px 50px 15px; background: #e0e0e0; box-shadow: 10px 15px 50px rgba(0,0,0,0.9); margin-bottom: 25px; position: relative; opacity: 0; }
+        .photo-wrapper::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-2deg); width: 80px; height: 25px; background: rgba(164, 22, 26, 0.7); box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 10; }
+        .photo { width: 100%; height: 100%; object-fit: cover; filter: grayscale(10%) sepia(20%); }
+
+        @keyframes smoothZoomIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes smoothZoomOut { 0% { transform: scale(1.1); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes smoothFloatUp { 0% { transform: translateY(20px) scale(0.98); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        .anim-z-in { animation: smoothZoomIn 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .anim-z-out { animation: smoothZoomOut 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .anim-float { animation: smoothFloatUp 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+        .text-content { text-align: center; max-width: 700px; width: 90vw; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px) saturate(150%); -webkit-backdrop-filter: blur(12px) saturate(150%); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 15px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6); }
+        .text-content h2 { font-size: 2.2rem; font-style: italic; color: #780000; margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 8px; opacity: 0; transform: translateY(10px); transition: opacity 1s ease 0.6s, transform 1s ease 0.6s; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .slide.active .text-content h2 { opacity: 1; transform: translateY(0); }
+        .typewriter-text { font-family: 'Courier Prime', monospace; font-size: 1.1rem; line-height: 1.8; color: #ffffff; min-height: 80px; text-align: left; border-left: 2px solid var(--accent-red); padding-left: 15px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+        .cursor { display: inline-block; width: 8px; height: 1.1rem; background: var(--accent-red); animation: blink 0.8s infinite; vertical-align: middle; margin-left: 4px; }
+        .instruction-back { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-family: 'Courier Prime', monospace; font-size: 0.9rem; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-shadow: 1px 1px 3px #000; pointer-events: none; z-index: 50; animation: pulse 2s infinite; }
+    </style>
+</head>
+<body>
+
+    <!-- BLOCKED SCREEN (STRICT JAVASCRIPT CHECK) -->
+    <div id="mobile-block">
+        <div class="block-content">
+            <h1>Akses Terbatas</h1>
+            <p>Birthday Album ini dirancang khusus untuk layar besar.<br>Mohon buka tautan ini secara langsung di <strong>Komputer atau Laptop</strong>.</p>
+        </div>
+    </div>
+
+    <!-- WRAPPER KONTEN UTAMA -->
+    <div id="main-content">
+        <div id="background-texture"></div>
+
+        <div id="lock-scene">
+            <div class="lock-box">
+                <h2>Birthday Album Terkunci</h2>
+                <p>Masukkan kunci untuk membuka</p>
+                <div class="password-container">
+                    <input type="password" id="password-input" placeholder="••••••••" onkeypress="handleKeyPress(event)">
+                    <button class="unlock-btn" onclick="checkPassword()">BUKA KUNCI</button>
+                </div>
+                <p id="error-msg">Kunci tidak cocok. Coba lagi.</p>
+            </div>
+        </div>
+
+        <div id="gallery-scene" onclick="closeDetail()">
+            <div id="slides-container"></div>
+            <div class="instruction-back">Klik di luar foto untuk kembali</div>
+        </div>
+
+        <div id="scattered-scene">
+            <div class="scatter-text">Pilih sebuah kenangan...</div>
+            <div id="scatter-container"></div>
+        </div>
+
+        <div id="birthday-scene" onclick="showScatteredPhotos()">
+            <div class="birthday-paper-wrapper">
+                <img src="asset/paper.png" class="paper-img" alt="Kertas Ucapan">
+                <div class="birthday-text">
+                    <h1>Selamat Ulang Tahun Sonia</h1>
+                    <p>"Semoga setiap langkahmu ke depan selalu diiringi kebahagiaan, dan setiap cita-citamu perlahan terwujud serta dirimu dapat menemukan makna yang indah dalam kehidupan. Setiap foto di album ini adalah potongan kecil dari cerita hebatmu."</p>
+                    <span class="tap-hint">Ketuk untuk membuka album</span>
+                </div>
+                <img src="asset/mawar.png" class="static-rose" alt="Mawar">
+            </div>
+        </div>
+
+        <div id="intro-scene">
+            <div id="roses-container"></div>
+            <div class="door door-left">
+                <div class="envelope-text" id="env-text">Happy Birthday<br>Sonia</div>
+            </div>
+            <div class="center-glow"></div>
+            <div class="door door-right"></div>
+            <button class="open-btn" onclick="openEnvelope()">BUKA</button>
+        </div>
+    </div> 
+
+    <script>
+        // ==========================================
+        // 1. SISTEM BLOKIR KETAT (ANTI DESKTOP MODE)
+        // ==========================================
+        function enforceDesktopOnly() {
+            // Mengambil dimensi *hardware* layar, bukan sekadar viewport browser
+            let screenWidth = window.screen.width;
+            let screenHeight = window.screen.height;
+            // Mencari sisi terpendek layar fisik (lebar HP saat portrait)
+            let physicalMinorAxis = Math.min(screenWidth, screenHeight); 
+            
+            // Deteksi kemampuan sentuh
+            let isTouchDevice = (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
+
+            // Jika perangkat memiliki sisi layar kurang dari 800px (HP)
+            // ATAU viewport diubah kecil (<800px)
+            // ATAU itu adalah perangkat layar sentuh dengan ukuran nanggung
+            if (physicalMinorAxis < 800 || window.innerWidth < 800 || (isTouchDevice && physicalMinorAxis < 1000)) {
+                document.getElementById('mobile-block').style.display = 'flex';
+                document.getElementById('main-content').style.setProperty('display', 'none', 'important');
+            } else {
+                document.getElementById('mobile-block').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }
+        }
+
+        enforceDesktopOnly();
+        window.addEventListener('resize', enforceDesktopOnly);
+
+        
+        const PASSWORD = "eXVlc2ZpMTMwOTAx"; 
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            const lockBox = document.querySelector('.lock-box');
+
+           if (btoa(input) === PASSWORD) {
+                document.getElementById('lock-scene').classList.add('unlocked');
+                
+                setTimeout(() => {
+                    document.getElementById('env-text').classList.add('reveal');
+                }, 800);
+
+            } else {
+                errorMsg.style.display = 'block';
+                lockBox.classList.remove('shake-anim');
+                void lockBox.offsetWidth; 
+                lockBox.classList.add('shake-anim');
+                document.getElementById('password-input').value = ""; 
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.keyCode === 13) { checkPassword(); }
+        }
+
+        // ==========================================
+        // 3. GENERATE MAWAR & DATA FOTO
+        // ==========================================
+        const rosesContainer = document.getElementById('roses-container');
+        for (let i = 0; i < 15; i++) {
+            let rose = document.createElement('div');
+            rose.className = 'rose';
+            let size = Math.random() * 30 + 20; 
+            let left = Math.random() * 100;
+            let duration = Math.random() * 8 + 6;
+            let delay = Math.random() * 5;
+            rose.style.width = size + 'px'; rose.style.height = size + 'px';
+            rose.style.left = left + 'vw';
+            rose.style.animationDuration = duration + 's';
+            rose.style.animationDelay = delay + 's';
+            rose.style.filter = `blur(${Math.random() * 3}px)`;
+            rosesContainer.appendChild(rose);
+        }
+
+
+        const storyData = [
+            { img: 'asset/photo/photo1.jpg', title: 'Awal Melodi', desc: 'Seperti nada pertama yang dipetik tanpa membaca partitur. Bermula dari insting, meraba harmoni secara otodidak.' },
+            { img: 'asset/photo/photo2.jpg', title: 'Goresan Makna', desc: 'Di antara rutinitas, menyusun garis dan bentuk. Sebuah karya sederhana yang menyimpan pesan untuk orang terkasih.' },
+            { img: 'asset/photo/photo3.jpg', title: 'Menyusun Ritme', desc: 'Duduk di depan layar, merangkai setiap ketukan, mengubah ide yang acak menjadi sebuah komposisi yang utuh.' },
+            { img: 'asset/photo/photo4.jpg', title: 'Jejak Perjalanan', desc: 'Ditemani deru mesin dan aspal panjang. Menikmati angin dan merawat apa yang selalu menemani perjalanan.' },
+            { img: 'asset/photo/photo5.jpg', title: 'Bergerak Tenang', desc: 'Mampu beradaptasi dengan cepat layaknya air. Menemukan ritme napas dan menguasai kedalaman dalam waktu singkat.' },
+            { img: 'asset/photo/photo6.jpg', title: 'Warna yang Diwariskan', desc: 'Ada kepekaan estetika yang mengalir diam-diam. Bakat visual dan kreativitas yang turun dari sentuhan tangan Ibu.' },
+            { img: 'asset/photo/photo7.jpg', title: 'Harmoni Terdekat', desc: 'Tumbuh bersama suara merdu dan desain digital yang menginspirasi. Ikatan yang saling memotivasi untuk berkarya.' },
+            { img: 'asset/photo/photo8.jpg', title: 'Memecahkan Masalah', desc: 'Tangan yang tak takut kotor oleh debu. Keinginan kuat memahami infrastruktur dan membongkar yang macet.' },
+            { img: 'asset/photo/photo9.jpg', title: 'Sketsa & Pertemuan', desc: 'Koneksi yang terajut lewat karya. Bertukar doa, menyisakan memori tentang satu pertemuan hangat di penghujung cerita.' },
+            { img: 'asset/photo/photo10.jpg', title: 'Lembaran Berikutnya', desc: 'Ini bukan akhir. Setiap hari adalah halaman kosong yang siap diisi dengan melodi baru dan rute yang belum dilewati.' },
+
+            { img: 'asset/photo/photo1.jpg', title: 'Awal Melodi', desc: 'Seperti nada pertama yang dipetik tanpa membaca partitur. Bermula dari insting, meraba harmoni secara otodidak.' },
+            { img: 'asset/photo/photo2.jpg', title: 'Goresan Makna', desc: 'Di antara rutinitas, menyusun garis dan bentuk. Sebuah karya sederhana yang menyimpan pesan untuk orang terkasih.' },
+            { img: 'asset/photo/photo3.jpg', title: 'Menyusun Ritme', desc: 'Duduk di depan layar, merangkai setiap ketukan, mengubah ide yang acak menjadi sebuah komposisi yang utuh.' },
+            { img: 'asset/photo/photo4.jpg', title: 'Jejak Perjalanan', desc: 'Ditemani deru mesin dan aspal panjang. Menikmati angin dan merawat apa yang selalu menemani perjalanan.' },
+            { img: 'asset/photo/photo5.jpg', title: 'Bergerak Tenang', desc: 'Mampu beradaptasi dengan cepat layaknya air. Menemukan ritme napas dan menguasai kedalaman dalam waktu singkat.' },
+            { img: 'asset/photo/photo6.jpg', title: 'Warna yang Diwariskan', desc: 'Ada kepekaan estetika yang mengalir diam-diam. Bakat visual dan kreativitas yang turun dari sentuhan tangan Ibu.' },
+            { img: 'asset/photo/photo7.jpg', title: 'Harmoni Terdekat', desc: 'Tumbuh bersama suara merdu dan desain digital yang menginspirasi. Ikatan yang saling memotivasi untuk berkarya.' },
+            { img: 'asset/photo/photo8.jpg', title: 'Memecahkan Masalah', desc: 'Tangan yang tak takut kotor oleh debu. Keinginan kuat memahami infrastruktur dan membongkar yang macet.' },
+            { img: 'asset/photo/photo9.jpg', title: 'Sketsa & Pertemuan', desc: 'Koneksi yang terajut lewat karya. Bertukar doa, menyisakan memori tentang satu pertemuan hangat di penghujung cerita.' },
+            { img: 'asset/photo/photo10.jpg', title: 'Lembaran Berikutnya', desc: 'Ini bukan akhir. Setiap hari adalah halaman kosong yang siap diisi dengan melodi baru dan rute yang belum dilewati.' }
+        ];
+
+        const scatterContainer = document.getElementById('scatter-container');
+        const slidesContainer = document.getElementById('slides-container');
+        const animations = ['anim-z-in', 'anim-z-out', 'anim-float']; 
+
+        storyData.forEach((data, index) => {
+            let mini = document.createElement('div');
+            mini.className = 'mini-photo';
+            let topPos = 15 + Math.random() * 60; 
+            let leftPos = 10 + Math.random() * 70; 
+            let rotation = -40 + Math.random() * 80; 
+            mini.style.top = topPos + 'vh';
+            mini.style.left = leftPos + 'vw';
+            mini.style.transform = `rotate(${rotation}deg)`;
+            mini.style.zIndex = Math.floor(Math.random() * 10);
+            
+            mini.innerHTML = `<img src="${data.img}" alt="Memori">`;
+            mini.onclick = () => openDetail(index);
+            scatterContainer.appendChild(mini);
+
+            let slide = document.createElement('div');
+            slide.className = 'slide';
+            slide.innerHTML = `
+                <div class="content-container" onclick="event.stopPropagation()">
+                    <div class="photo-wrapper" id="photo-${index}">
+                        <img src="${data.img}" class="photo" alt="Memori">
+                    </div>
+                    <div class="text-content">
+                        <h2>${data.title}</h2>
+                        <div class="typewriter-text" id="desc-${index}"></div>
+                    </div>
+                </div>
+            `;
+            slidesContainer.appendChild(slide);
+        });
+
+        // ==========================================
+        // 4. LOGIKA SCENE & NAVIGASI
+        // ==========================================
+        const introScene = document.getElementById('intro-scene');
+        const birthdayScene = document.getElementById('birthday-scene');
+        const scatteredScene = document.getElementById('scattered-scene');
+        const galleryScene = document.getElementById('gallery-scene');
+        
+        let isOpened = false;
+        let isBirthdayRead = false;
+        let slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        let typeTimeout;
+
+        function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+            introScene.classList.add('opened');
+            setTimeout(() => { birthdayScene.classList.add('visible'); }, 800);
+        }
+
+        function showScatteredPhotos() {
+            if (isBirthdayRead) return;
+            isBirthdayRead = true;
+            birthdayScene.classList.remove('visible');
+            setTimeout(() => { scatteredScene.classList.add('visible'); }, 1000);
+        }
+
+        function openDetail(index) {
+            currentSlide = index;
+            scatteredScene.classList.remove('visible'); 
+            setTimeout(() => {
+                galleryScene.classList.add('visible');
+                showSlide(currentSlide);
+            }, 600);
+        }
+
+        function closeDetail() {
+            galleryScene.classList.remove('visible');
+            slides.forEach(s => s.classList.remove('active')); 
+            setTimeout(() => {
+                scatteredScene.classList.add('visible'); 
+            }, 600); 
+        }
+
+        function typeWriterEffect(elementId, text, index = 0) {
+            const element = document.getElementById(elementId);
+            if (index === 0) element.innerHTML = ''; 
+            
+            if (index < text.length) {
+                element.innerHTML = text.substring(0, index + 1) + '<span class="cursor"></span>';
+                typeTimeout = setTimeout(() => typeWriterEffect(elementId, text, index + 1), 45); 
+            } else {
+                element.innerHTML = text; 
+            }
+        }
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            clearTimeout(typeTimeout); 
+            document.querySelectorAll('.typewriter-text').forEach(el => el.innerHTML = '');
+
+            let photoWrapper = document.getElementById(`photo-${index}`);
+            photoWrapper.classList.remove('anim-z-in', 'anim-z-out', 'anim-float');
+            photoWrapper.offsetHeight; 
+
+            let randomAnim = animations[Math.floor(Math.random() * animations.length)];
+            photoWrapper.classList.add(randomAnim);
+
+            slides[index].classList.add('active');
+
+            setTimeout(() => {
+                typeWriterEffect(`desc-${index}`, storyData[index].desc);
+            }, 700);
+        }
+    </script>
+</body>
+</html>
