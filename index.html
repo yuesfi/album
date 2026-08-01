@@ -26,7 +26,7 @@
         }
 
         /* -----------------------------------
-           BLOCKED SCREEN (STRICT)
+           BLOCKED SCREEN
            ----------------------------------- */
         #mobile-block {
             display: none; /* Akan diatur oleh JS */
@@ -68,7 +68,7 @@
         }
 
         /* -----------------------------------
-           BABAK 0: Layar Kunci (Password)
+           BABAK 0: Layar Kunci
            ----------------------------------- */
         #lock-scene {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -379,21 +379,15 @@
 
     <script>
         // ==========================================
-        // 1. SISTEM BLOKIR KETAT (ANTI DESKTOP MODE)
+        // 1. BLOCKED SCREEN
         // ==========================================
         function enforceDesktopOnly() {
-            // Mengambil dimensi *hardware* layar, bukan sekadar viewport browser
             let screenWidth = window.screen.width;
             let screenHeight = window.screen.height;
-            // Mencari sisi terpendek layar fisik (lebar HP saat portrait)
             let physicalMinorAxis = Math.min(screenWidth, screenHeight); 
             
-            // Deteksi kemampuan sentuh
             let isTouchDevice = (navigator.maxTouchPoints || 'ontouchstart' in document.documentElement);
 
-            // Jika perangkat memiliki sisi layar kurang dari 800px (HP)
-            // ATAU viewport diubah kecil (<800px)
-            // ATAU itu adalah perangkat layar sentuh dengan ukuran nanggung
             if (physicalMinorAxis < 800 || window.innerWidth < 800 || (isTouchDevice && physicalMinorAxis < 1000)) {
                 document.getElementById('mobile-block').style.display = 'flex';
                 document.getElementById('main-content').style.setProperty('display', 'none', 'important');
@@ -406,32 +400,41 @@
         enforceDesktopOnly();
         window.addEventListener('resize', enforceDesktopOnly);
 
-        
-        const PASSWORD = "eXVlc2ZpMTMwOTAx"; 
+      
+        const PASSWORD = "SzBEM3hBVE93TVRNcFoyY2xWWGU5OTk="; 
+
+        function StackEnc(text) {
+            let layer1 = btoa(text);
+            let layer2 = layer1.split('').reverse().join('');
+            let layer3 = "K0D3" + layer2 + "999"; 
+    
+        return btoa(layer3);
+        }
+
         function checkPassword() {
             const input = document.getElementById('password-input').value;
             const errorMsg = document.getElementById('error-msg');
             const lockBox = document.querySelector('.lock-box');
 
-           if (btoa(input) === PASSWORD) {
-                document.getElementById('lock-scene').classList.add('unlocked');
-                
-                setTimeout(() => {
-                    document.getElementById('env-text').classList.add('reveal');
-                }, 800);
+        if (StackEnc(input) === PASSWORD) {
+        document.getElementById('lock-scene').classList.add('unlocked');
+        
+        setTimeout(() => {
+            document.getElementById('env-text').classList.add('reveal');
+        }, 800);
 
-            } else {
-                errorMsg.style.display = 'block';
-                lockBox.classList.remove('shake-anim');
-                void lockBox.offsetWidth; 
-                lockBox.classList.add('shake-anim');
-                document.getElementById('password-input').value = ""; 
-            }
+        } else {
+        errorMsg.style.display = 'block';
+        lockBox.classList.remove('shake-anim');
+        void lockBox.offsetWidth; 
+        lockBox.classList.add('shake-anim');
+        document.getElementById('password-input').value = ""; 
         }
+    }
 
         function handleKeyPress(e) {
-            if (e.keyCode === 13) { checkPassword(); }
-        }
+        if (e.keyCode === 13) { checkPassword(); }
+    }
 
         // ==========================================
         // 3. GENERATE MAWAR & DATA FOTO
